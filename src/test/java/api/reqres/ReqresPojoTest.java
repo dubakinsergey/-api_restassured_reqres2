@@ -1,6 +1,13 @@
-package api;
+package api.reqres;
 
-import io.restassured.http.ContentType;
+import api.reqres.colors.ColorsData;
+import api.reqres.registration.Register;
+import api.reqres.registration.SuccesReg;
+import api.reqres.registration.UnSuccessReg;
+import api.reqres.spec.Specification;
+import api.reqres.users.UserData;
+import api.reqres.users.UserTime;
+import api.reqres.users.UserTimeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +17,13 @@ import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 
-public class ReqresTest {
+public class ReqresPojoTest {
     private final static String URL = "https://reqres.in/";
+
+    //Тест 1
+    //1. Используя сервис https://reqres.in/ получить список пользователей со второй (2) страницы
+    //2. Убедиться что имена файлов-аватаров пользоваталей совпадают;
+    //3. Убедиться, что email пользователей имеет окончание reqres.in;
 
     @Test
     public void checkAvatarAndIdTest() {
@@ -33,6 +45,13 @@ public class ReqresTest {
             Assertions.assertTrue(avatars.get(i).contains(ids.get(i)));
         }
     }
+
+    //Тест 2
+    //1. Используя сервис https://reqres.in/ протестировать регистрацию пользователя в системе
+    //2. Необходимо создание 2 тестов:
+    //- успешная регистрация
+    //- регистрация с ошибкой из-за отсутствия пароля,
+    //3. Проверить коды ошибок.
 
     @Test
     public void succesRegTest() {
@@ -65,6 +84,9 @@ public class ReqresTest {
         Assertions.assertEquals("Missing password", unSuccessReg.getError());
     }
 
+    //Тест 3
+    //Используя сервис https://reqres.in/ убедиться, что операция LIST<RESOURCE> возвращает данные, отсортированные по годам.
+
     @Test
     public void sortedYearsTest() {
         Specification.installSpecification(Specification.requestSpec(URL), Specification.responseSpecOK200());
@@ -83,6 +105,9 @@ public class ReqresTest {
 
     }
 
+    //Тест 4.1
+    //Используя сервис https://reqres.in/ попробовать удалить второго пользователя и сравнить статус-код
+
     @Test
     public void deleteUserTest() {
         Specification.installSpecification(Specification.requestSpec(URL), Specification.responseSpecUnique(204));
@@ -92,6 +117,8 @@ public class ReqresTest {
                 .then().log().all();
     }
 
+    //Тест 4.2
+    //Используя сервис https://reqres.in/ обновить информацию о пользователе и сравнить дату обновления с текущей датой на машине
     @Test
     public void timeTest() {
         Specification.installSpecification(Specification.requestSpec(URL), Specification.responseSpecOK200());
