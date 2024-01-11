@@ -25,19 +25,21 @@ public class ReqresNoPojoTest {
     @Test
     public void checkAvatarNoPojoTest() {
         Specification.installSpecification(Specification.requestSpec(URL), Specification.responseSpecOK200());
-        Response response = given()
+        Response response = given() //Response - это интерфейс, "класс без реализации, грубо говоря", реализуем интерфейс через ответ
                 .when()
                 .get("api/users?page=2")
                 .then().log().all()
-                .body("page", equalTo(2))
-                .body("data.id", notNullValue())
+                .body("page", equalTo(2)) // берём "page" и ожидаем там 2
+                .body("data.id", notNullValue()) // проваливаемся к полю класса через точку
                 .body("data.email", notNullValue())
                 .body("data.first_name", notNullValue())
                 .body("data.last_name", notNullValue())
                 .body("data.avatar", notNullValue())
                 .extract().response();
+        
+        //теперь с созданным response можем работать и превратить его в Json
         JsonPath jsonPath = response.jsonPath();
-        List<String> emails = jsonPath.get("data.email");
+        List<String> emails = jsonPath.get("data.email"); //используем экземпляр jsonPath, вызовем get и укажем путь и сюда засунется все то, что найденно под определенным путем
         List<Integer> ids = jsonPath.get("data.id");
         List<String> avatars = jsonPath.get("data.avatar");
 
